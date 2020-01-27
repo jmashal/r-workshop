@@ -8,3 +8,119 @@ output: html_document
 # Plots with ggplot2
 
 We are going to make plots in R using the ggplot2 package from the tidyverse.
+
+We will install these packages:
+
+- tidyverse: suite of packages for wrangling & visualization (ggplot)
+- readxl: to read in excel files (in many ways)
+- here: to help with filepaths
+
+
+```{r}
+# install.packages("tidyverse")
+# library(tidyverse)
+library(ggplot2)
+library(readr) #install.packages("readr")
+# install.packages("readxl")
+library(readxl)
+# install.packages("here")
+library(here)
+# install.packages("read_csv")
+library(read_csv)
+# install.packages("read_excel")
+```
+```{r echo=FALSE}
+ci_np <- read_excel(here("data/ci_np.xlsx"))
+# also be written:
+ca_np <- read_csv(here("data", "ca_np.csv"))
+```
+
+### Make my own first graph!
+
+We're going to make a line plot of year (x-variable) vs visitors (y-variable) in ggplot:
+```{r}
+ggplot(data = ci_np, aes(x = year, y = visitors)) +
+  geom_line()
+```
+
+#Update the geom_ to geom_point(), geom_col(), geom_area()
+
+Make a base layer for my CI plots:
+```{r}
+gg_base <- ggplot(data = ci_np, aes(x = year, y = visitors))
+
+gg_base + geom_point()
+```
+
+### Now let's start customizing!
+
+- Line / point colors: color
+- Change line type: linetype
+- Change point style: pch
+- Change transparency: alpha
+
+```{r}
+gg_base +
+  geom_line(
+    color = "purple",
+    linetype= "dashed"
+  )
+```
+
+Activity: create a ggplot scatterplot (geom_point) that has triangle symbols (hint: ?pch). of a non-default size (size = #) and that are an updated color.
+
+```{r}
+gg_base + 
+  geom_point(
+    color="dodgerblue",
+    pch = 2,
+    size = 4
+  )    
+```
+
+
+### Update graph aesthetics based on variables
+
+```{r}
+gg_base +
+    geom_point(
+      aes(size  = visitors, color = visitors),
+      pch = 10
+    )
+```
+
+#Add an argument to update the color based on the year value
+
+### Use gg-themes for overall updates
+
+- theme_light()
+- theme_minimal()
+- theme_bw()
+
+```{r}
+gg_base + 
+  geom_area() +
+  theme_minimal()
+```
+
+### Create a multi-series line plot using data for all CA National Parks
+
+```{r}
+ggplot(data=ca_np, aes(x = year, y=visitors, group = park_name)) +
+  geom_line(aes(color=park_name))
+
+# Try to update the line colors based on the park_name variable
+```
+
+```{r}
+my_np_graph <- ggplot(data=ca_np, aes(x=year, y=visitors))+
+  geom_point(aes(color = park_name), show.legend=FALSE) +
+  facet_wrap(~park_name, scales = "free") +
+  theme_minimal()
+```
+
+Export my graph as a .png
+```{r}
+ggsave(plot = my_np_graph, here("figures", "np_graph.png"))
+```
+
