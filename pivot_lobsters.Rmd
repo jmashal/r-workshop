@@ -8,13 +8,14 @@ output: html_document
 Attaching our packages and reading in data
 
 ```{r}
-library(tidyverse) #install.packages("tidyverse")
-library(broom) #install.packages("broom")
+#library(tidyverse) #install.packages("tidyverse")
+#library(broom) #install.packages("broom")
 
 library(readxl)
 library(here)
 library(skimr) #install.packages("skimr")
 library(kableExtra) #install.packages("kableExtra")
+library(ggplot2)
 
 # read in lobster data
 lobsters <- read_excel(here("data", "lobsters2.xlsx"),
@@ -33,7 +34,7 @@ skim(lobsters) #not explicitly stated
 In R, Pivot tables are: 'group_by() %>% summarize()'
 'n()' function will count observations
 ```{r}
-load(dplyr)
+library(dplyr)
 # group by year and site
 lobsters %>% 
   group_by(site, year) %>% 
@@ -64,9 +65,6 @@ There are 'r nrow(lobsters)' total lobsters included in this report.
 3. sync this to github 
 
 ```{r}
-median_lobsters <- lobsters %>% 
-  group_by(site, year) %>% 
-  summarize(median_size_mm = median(size_mm, na.rm = TRUE))
 
 siteyear_summary <- lobsters %>% 
   group_by(site, year) %>% 
