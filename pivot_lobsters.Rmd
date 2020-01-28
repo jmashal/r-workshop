@@ -1,0 +1,62 @@
+---
+title: "Pivot Lobsters"
+author: "Jasen Mashal"
+date: "1/27/2020"
+output: html_document
+---
+
+Attaching our packages and reading in data
+
+```{r}
+library(tidyverse) #install.packages("tidyverse")
+library(broom) #install.packages("broom")
+
+library(readxl)
+library(here)
+library(skimr) #install.packages("skimr")
+library(kableExtra) #install.packages("kableExtra")
+
+# read in lobster data
+lobsters <- read_excel(here("data", "lobsters.xlsx"),
+                       skip = 4)
+```
+
+Viewing our data with skimr
+
+```{r}
+library(tidyr) #install.packages("tidyr")
+skimr::skim(lobsters) #explicitly stated
+skim(lobsters) #not explicitly stated
+```
+
+# Pivot Tables
+In R, Pivot tables are: 'group_by() %>% summarize()'
+'n()' function will count observations
+```{r}
+load(dplyr)
+# group by year and site
+lobsters %>% 
+  group_by(site, year) %>% 
+  summarize(count_by_site_year = n())
+```
+
+Summarize by multiple variables
+
+```{r}
+siteyear_summary <- lobsters %>% 
+  group_by(site, year) %>% 
+  summarize(count_by_site_year = n(),
+            mean_size_mm = mean(size_mm, na.rm = TRUE),
+            sd_size_mm= sd(size_mm, na.rm = TRUE))
+```
+
+Table formatting with 'kableExtra::kable()'
+```{r}
+siteyear_summary %>% 
+  kable()
+```
+
+There are 'r nrow(lobsters)' total lobsters included in this report.
+
+## Activity
+1. build from our analyses: calculate the median lobster size for each site and year
